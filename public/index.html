@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Коротко — короткие ссылки</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%231c1612'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='36' font-family='sans-serif' fill='%23f4ecdc'%3EK%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f4ecdc;
+      --ink: #1c1612;
+      --muted: #5e564c;
+      --line: #1c1612;
+      --card: #fffaf2;
+      --stamp: #d6452d;
+      --ok: #1d6b43;
+      --warn: #8d5a10;
+      --shadow: 5px 5px 0 var(--ink);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(214, 69, 45, 0.12), transparent 28%),
+        linear-gradient(180deg, #f7f1e6 0%, var(--paper) 40%, #efe4d0 100%);
+      font-family: Manrope, "Segoe UI", "Liberation Sans", sans-serif;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    .wrap { width: min(980px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 64px; }
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      padding-bottom: 22px;
+      border-bottom: 2px solid var(--line);
+    }
+    .eyebrow { margin: 0 0 6px; color: var(--stamp); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+    h1 { margin: 0; font-family: Unbounded, Manrope, sans-serif; font-size: clamp(3rem, 8vw, 5.4rem); font-weight: 600; letter-spacing: -0.05em; line-height: 0.9; }
+    .lede { max-width: 42ch; margin: 14px 0 0; color: var(--muted); }
+    .stamp {
+      width: 92px; height: 92px; display: grid; place-items: center;
+      border: 2px solid var(--stamp); border-radius: 50%; color: var(--stamp);
+      font-family: Unbounded, Manrope, sans-serif; font-size: 0.78rem;
+      line-height: 1.15; text-align: center; text-transform: uppercase; transform: rotate(8deg);
+    }
+    form, .panel, .rules { margin-top: 22px; }
+    label { display: block; margin-bottom: 8px; font-size: 0.92rem; font-weight: 700; }
+    input[type="text"] {
+      width: 100%; padding: 16px 18px; border: 2px solid var(--line); border-radius: 0;
+      background: var(--card); color: var(--ink);
+      font: 600 1.05rem/1.3 ui-monospace, "Cascadia Mono", "Liberation Mono", monospace;
+      box-shadow: var(--shadow);
+    }
+    input:focus { outline: 3px solid rgba(214, 69, 45, 0.35); outline-offset: 2px; }
+    .chips, .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chips { margin-top: 12px; }
+    .chips button, .actions button, .copy {
+      border: 2px solid var(--line); background: transparent; color: var(--ink);
+      font: 700 0.95rem/1 Manrope, sans-serif; cursor: pointer;
+    }
+    .chips button { padding: 7px 10px; }
+    .actions { margin-top: 14px; }
+    .actions button, .copy { padding: 12px 14px; background: var(--card); box-shadow: 3px 3px 0 var(--ink); }
+    .actions button[data-action="create"] { background: var(--ink); color: #f7f1e6; }
+    .actions button[data-action="remove"] { background: var(--stamp); color: #fffaf2; border-color: var(--ink); }
+    button:hover { transform: translate(-1px, -1px); }
+    button:disabled { opacity: 0.55; cursor: wait; transform: none; }
+    button:focus-visible { outline: 3px solid rgba(214, 69, 45, 0.45); outline-offset: 2px; }
+    .panel { padding: 18px; border: 2px solid var(--line); background: var(--card); box-shadow: var(--shadow); }
+    .status { margin: 0; font-weight: 700; }
+    .status.ok { color: var(--ok); }
+    .status.warn { color: var(--warn); }
+    .status.bad { color: var(--stamp); }
+    .short-row:not([hidden]) { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+    .short-row a { color: var(--ink); font-family: ui-monospace, "Cascadia Mono", "Liberation Mono", monospace; font-weight: 700; word-break: break-all; }
+    pre { margin: 14px 0 0; padding: 14px; overflow: auto; background: #241c17; color: #f6efe4; font-family: ui-monospace, "Cascadia Mono", "Liberation Mono", monospace; font-size: 0.92rem; line-height: 1.5; }
+    pre.muted { color: #b7aa9b; }
+    .rules { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .rules article { min-height: 150px; padding: 14px; border: 2px solid var(--line); background: rgba(255, 250, 242, 0.72); }
+    .rules h2 { margin: 0 0 8px; font-family: ui-monospace, "Cascadia Mono", "Liberation Mono", monospace; font-size: 0.95rem; }
+    .rules p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+    .log { margin-top: 22px; }
+    .log h2 { margin: 0 0 8px; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; }
+    .log ol { margin: 0; padding: 0; list-style: none; }
+    .log li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid rgba(28, 22, 18, 0.18); font-family: ui-monospace, "Cascadia Mono", "Liberation Mono", monospace; font-size: 0.86rem; }
+    .log span:last-child { text-align: right; word-break: break-all; }
+    @media (max-width: 800px) {
+      header { grid-template-columns: 1fr; }
+      .stamp { display: none; }
+      .rules { grid-template-columns: 1fr 1fr; }
+      .actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .actions button { width: 100%; }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: min(100% - 20px, 980px); }
+      .rules { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div>
+        <p class="eyebrow">Node.js · Express · NeDB</p>
+        <h1>Коротко</h1>
+        <p class="lede">Один адрес — один основной код. Алиас добавляет ещё один, обновление меняет основной, удаление стирает все.</p>
+      </div>
+      <div class="stamp">6<br>знаков</div>
+    </header>
+    <form id="form">
+      <label for="url">Оригинальный адрес</label>
+      <input id="url" name="url" type="text" inputmode="url" spellcheck="false" autocomplete="off" placeholder="ithub.ru">
+      <div class="chips">
+        <button type="button" data-fill="ithub.ru">ithub.ru</button>
+        <button type="button" data-fill="12345">12345</button>
+        <button type="button" data-fill="https://example.com/docs">https://example.com/docs</button>
+      </div>
+      <div class="actions">
+        <button type="submit" data-action="create">Создать</button>
+        <button type="button" data-action="refresh">Обновить</button>
+        <button type="button" data-action="alias">Алиас</button>
+        <button type="button" data-action="remove">Удалить</button>
+      </div>
+    </form>
+    <section class="panel" aria-live="polite">
+      <p class="status" id="status">Вставьте адрес вроде itHub.ru. Строка из цифр, например 12345, не подойдёт.</p>
+      <div class="short-row" id="short-row" hidden>
+        <a id="short-link" href="" target="_blank" rel="noopener"></a>
+        <button type="button" class="copy" id="copy">Копировать</button>
+      </div>
+      <pre id="json" class="muted">{
+  "original": "ithub.ru",
+  "short": "http://…/a8Kd2Q",
+  "created": true
+}</pre>
+    </section>
+    <section class="rules">
+      <article>
+        <h2>/create</h2>
+        <p>Новый код, если адреса ещё нет. Если есть — вернётся прежний, created: null.</p>
+      </article>
+      <article>
+        <h2>/refresh</h2>
+        <p>Заменяет основной код. Старый основной адрес больше не открывается.</p>
+      </article>
+      <article>
+        <h2>/alias</h2>
+        <p>Добавляет ещё один код к тому же адресу. Если адреса нет — создаёт его.</p>
+      </article>
+      <article>
+        <h2>/remove</h2>
+        <p>Удаляет все коды этого адреса. Чужие записи не трогает.</p>
+      </article>
+    </section>
+    <section class="log">
+      <h2>Журнал сессии</h2>
+      <ol id="log"></ol>
+    </section>
+  </main>
+  <script>
+    const form = document.querySelector('#form');
+    const input = document.querySelector('#url');
+    const statusNode = document.querySelector('#status');
+    const jsonNode = document.querySelector('#json');
+    const shortRow = document.querySelector('#short-row');
+    const shortLink = document.querySelector('#short-link');
+    const copyButton = document.querySelector('#copy');
+    const logNode = document.querySelector('#log');
+    const buttons = [...document.querySelectorAll('.actions button')];
+    let lastShort = '';
+
+    document.querySelectorAll('[data-fill]').forEach((button) => {
+      button.addEventListener('click', () => {
+        input.value = button.dataset.fill;
+        input.focus();
+      });
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      call('create');
+    });
+
+    buttons.forEach((button) => {
+      if (button.type === 'submit') return;
+      button.addEventListener('click', () => call(button.dataset.action));
+    });
+
+    copyButton.addEventListener('click', async () => {
+      if (!lastShort) return;
+      try {
+        await navigator.clipboard.writeText(lastShort);
+        copyButton.textContent = 'Скопировано';
+      } catch {
+        copyButton.textContent = 'Не вышло';
+      }
+      setTimeout(() => { copyButton.textContent = 'Копировать'; }, 1200);
+    });
+
+    async function call(action) {
+      const url = input.value.trim();
+      if (!url) {
+        showStatus('Введите адрес.', 'bad');
+        return;
+      }
+      buttons.forEach((button) => { button.disabled = true; });
+      showStatus('Запрос…', '');
+      try {
+        const response = await fetch(`/${action}?url=${encodeURIComponent(url)}`, {
+          headers: { Accept: 'application/json' },
+        });
+        render(action, await response.json());
+      } catch {
+        showStatus('Сервис не ответил. Попробуйте ещё раз.', 'bad');
+      } finally {
+        buttons.forEach((button) => { button.disabled = false; });
+      }
+    }
+
+    function render(action, data) {
+      jsonNode.classList.remove('muted');
+      jsonNode.textContent = JSON.stringify(data, null, 2);
+      const message = describe(action, data);
+      showStatus(message.text, message.tone);
+      if (typeof data.short === 'string' && /^https?:\/\//i.test(data.short)) {
+        lastShort = data.short;
+        shortLink.href = data.short;
+        shortLink.textContent = data.short;
+        shortRow.hidden = false;
+      } else {
+        lastShort = '';
+        shortRow.hidden = true;
+      }
+      const item = document.createElement('li');
+      const name = document.createElement('span');
+      const detail = document.createElement('span');
+      name.textContent = `/${action}`;
+      detail.textContent = data.short || flagText(data);
+      item.append(name, detail);
+      logNode.prepend(item);
+      while (logNode.children.length > 6) logNode.lastElementChild.remove();
+    }
+
+    function showStatus(text, tone) {
+      statusNode.textContent = text;
+      statusNode.className = `status${tone ? ` ${tone}` : ''}`;
+    }
+
+    function flagText(data) {
+      const flag = ['created', 'refresh', 'alias', 'deleted'].find((key) => key in data);
+      if (!flag) return '';
+      return `${flag}: ${JSON.stringify(data[flag])}`;
+    }
+
+    function describe(action, data) {
+      if (action === 'alias' && 'created' in data && data.created === true) {
+        return { text: 'Адреса ещё не было, поэтому он создан — как при /create.', tone: 'ok' };
+      }
+      if (data.created === true) return { text: 'Код создан. Короткая ссылка ведёт на оригинал.', tone: 'ok' };
+      if (data.created === null) return { text: 'Такой адрес уже есть. Существующий код не менялся.', tone: 'warn' };
+      if (data.created === false) return { text: 'Не получилось создать. Нужен адрес вроде itHub.ru, а не 12345.', tone: 'bad' };
+      if (data.refresh === true) return { text: 'Основной код заменён. Прежний основной код больше не откроется.', tone: 'ok' };
+      if (data.refresh === null) return { text: 'Обновлять нечего: этого адреса нет в базе.', tone: 'warn' };
+      if (data.refresh === false) return { text: 'Не получилось обновить код.', tone: 'bad' };
+      if (data.alias === true) return { text: 'Добавлен ещё один код. Прежние тоже ведут на этот адрес.', tone: 'ok' };
+      if (data.alias === false) return { text: 'Не получилось добавить алиас.', tone: 'bad' };
+      if (data.deleted === true) return { text: 'Все коды этого адреса удалены.', tone: 'ok' };
+      if (data.deleted === null) return { text: 'В базе этого адреса нет.', tone: 'warn' };
+      if (data.deleted === false) return { text: 'Не получилось удалить.', tone: 'bad' };
+      return { text: 'Ответ получен.', tone: '' };
+    }
+  </script>
+</body>
+</html>
